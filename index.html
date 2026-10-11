@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>FocusFlow — Student Productivity &amp; Study Dashboard</title>
+  <meta name="description" content="FocusFlow helps students plan their day, manage tasks, run Pomodoro focus sessions and track study progress — all in one clean dashboard.">
+  <meta name="theme-color" content="#6C63FF">
+  <link rel="icon" type="image/svg+xml" href="assets/images/favicon.svg">
+
+  <!-- Two font families only: Plus Jakarta Sans (headings) + Inter (body). System fonts are the fallback. -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="style.css">
+  <script src="script.js" defer></script>
+</head>
+<body>
+
+  <!-- SVG icon sprite (referenced with <use href="#i-name">) -->
+  <svg class="sprite" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg">
+    <symbol id="i-check-square" viewBox="0 0 24 24"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></symbol>
+    <symbol id="i-calendar" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></symbol>
+    <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></symbol>
+    <symbol id="i-bar-chart" viewBox="0 0 24 24"><path d="M18 20V10M12 20V4M6 20v-6"/></symbol>
+    <symbol id="i-target" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></symbol>
+    <symbol id="i-check" viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></symbol>
+    <symbol id="i-trash" viewBox="0 0 24 24"><path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2m3 0v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/><path d="M10 11v6M14 11v6"/></symbol>
+    <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+    <symbol id="i-play" viewBox="0 0 24 24"><path d="M7 4.5l13 7.5-13 7.5z" fill="currentColor"/></symbol>
+    <symbol id="i-pause" viewBox="0 0 24 24"><rect x="6" y="4" width="4" height="16" rx="1" fill="currentColor"/><rect x="14" y="4" width="4" height="16" rx="1" fill="currentColor"/></symbol>
+    <symbol id="i-reset" viewBox="0 0 24 24"><path d="M1 4v6h6"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></symbol>
+    <symbol id="i-flame" viewBox="0 0 24 24"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/></symbol>
+    <symbol id="i-book" viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></symbol>
+    <symbol id="i-quote" viewBox="0 0 24 24"><path d="M3 21c3 0 7-1 7-8V5c0-1.25-.756-2.017-2-2H4c-1.25 0-2 .75-2 1.972V11c0 1.25.75 2 2 2 1 0 1 0 1 1v1c0 1-1 2-2 2s-1 .008-1 1.031V21z"/><path d="M15 21c3 0 7-1 7-8V5c0-1.25-.757-2.017-2-2h-4c-1.25 0-2 .75-2 1.972V11c0 1.25.75 2 2 2h.75c0 2.25.25 4-2.75 4v3z"/></symbol>
+    <symbol id="i-chevron" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></symbol>
+    <symbol id="i-arrow-right" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></symbol>
+    <symbol id="i-mail" viewBox="0 0 24 24"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-10 6L2 7"/></symbol>
+    <symbol id="i-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></symbol>
+    <symbol id="i-alert" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></symbol>
+    <symbol id="i-sparkle" viewBox="0 0 24 24"><path d="M12 3l1.9 5.1L19 10l-5.1 1.9L12 17l-1.9-5.1L5 10l5.1-1.9z"/></symbol>
+  </svg>
+
+  <a class="skip-link" href="#main">Skip to main content</a>
+
+  <!-- ============ 1. NAVIGATION ============ -->
+  <header class="navbar" id="navbar">
+    <div class="container navbar__inner">
+      <a class="logo" href="#home" aria-label="FocusFlow — back to top">
+        <img class="logo__mark" src="assets/images/favicon.svg" alt="" width="34" height="34">
+        <span class="logo__text">FocusFlow</span>
+      </a>
+
+      <button class="nav-toggle" id="nav-toggle" type="button" aria-expanded="false" aria-controls="site-nav" aria-label="Open menu">
+        <span class="nav-toggle__bar"></span>
+        <span class="nav-toggle__bar"></span>
+        <span class="nav-toggle__bar"></span>
+      </button>
+
+      <nav class="nav" id="site-nav" aria-label="Primary">
+        <ul class="nav__list">
+          <li><a class="nav__link" href="#home" data-nav-link="home">Home</a></li>
+          <li><a class="nav__link" href="#features" data-nav-link="features">Features</a></li>
+          <li><a class="nav__link" href="#dashboard" data-nav-link="dashboard">Dashboard</a></li>
+          <li><a class="nav__link" href="#planner" data-nav-link="planner">Planner</a></li>
+          <li><a class="nav__link" href="#faq" data-nav-link="faq">FAQ</a></li>
+        </ul>
+        <button class="btn btn--primary btn--sm nav__cta" id="get-started" type="button">Get Started</button>
+      </nav>
+    </div>
+  </header>
+
+  <main id="main">
+
+    <!-- ============ 2. HERO ============ -->
+    <section class="hero" id="home" aria-labelledby="hero-title">
+      <div class="container hero__grid">
+        <div class="hero__content">
+          <p class="eyebrow hero__eyebrow"><svg class="icon icon--sm" aria-hidden="true"><use href="#i-sparkle"/></svg> Built for students</p>
+          <h1 class="hero__title" id="hero-title">Study Smarter.<br><span class="text-gradient">Stay Focused.</span></h1>
+          <p class="hero__text">Plan your day, manage your tasks, and build better study habits with FocusFlow.</p>
+          <div class="hero__actions">
+            <a class="btn btn--primary btn--lg" href="#planner">Start Planning <svg class="icon" aria-hidden="true"><use href="#i-arrow-right"/></svg></a>
+            <a class="btn btn--ghost btn--lg" href="#features">Explore Features</a>
+          </div>
+          <ul class="hero__meta" aria-label="Highlights">
+            <li><svg class="icon icon--sm" aria-hidden="true"><use href="#i-check"/></svg> Free to use</li>
+            <li><svg class="icon icon--sm" aria-hidden="true"><use href="#i-check"/></svg> No sign-up</li>
+            <li><svg class="icon icon--sm" aria-hidden="true"><use href="#i-check"/></svg> Works in your browser</li>
+          </ul>
+        </div>
+
+        <div class="hero__visual">
+          <img class="hero__image" src="assets/images/hero-dashboard.svg" width="560" height="440"
+               alt="Illustration of the FocusFlow dashboard showing 75% daily progress, a weekly study hours chart, a completed task list, a 24:35 focus timer and a 7 day streak.">
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ 3. FEATURES ============ -->
+    <section class="section" id="features" aria-labelledby="features-title">
+      <div class="container">
+        <header class="section-head reveal">
+          <p class="eyebrow">Features</p>
+          <h2 class="section-title" id="features-title">Everything You Need to Stay Productive</h2>
+          <p class="section-lead">Four simple tools that work together, so you spend less time organising and more time learning.</p>
+        </header>
+
+        <div class="features__grid">
+          <article class="feature-card reveal">
+            <span class="feature-card__icon"><svg class="icon" aria-hidden="true"><use href="#i-check-square"/></svg></span>
+            <h3 class="feature-card__title">Smart Task Management</h3>
+            <p class="feature-card__text">Organize assignments, deadlines and daily tasks in one simple workspace.</p>
+          </article>
+          <article class="feature-card reveal">
+            <span class="feature-card__icon"><svg class="icon" aria-hidden="true"><use href="#i-calendar"/></svg></span>
+            <h3 class="feature-card__title">Study Planner</h3>
+            <p class="feature-card__text">Plan your study sessions and create a structured weekly routine.</p>
+          </article>
+          <article class="feature-card reveal">
+            <span class="feature-card__icon"><svg class="icon" aria-hidden="true"><use href="#i-clock"/></svg></span>
+            <h3 class="feature-card__title">Focus Timer</h3>
+            <p class="feature-card__text">Use focused study sessions with built-in breaks to maintain concentration.</p>
+          </article>
+          <article class="feature-card reveal">
+            <span class="feature-card__icon"><svg class="icon" aria-hidden="true"><use href="#i-bar-chart"/></svg></span>
+            <h3 class="feature-card__title">Progress Tracking</h3>
+            <p class="feature-card__text">Track completed tasks, study hours and productivity progress.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ 4. PRODUCTIVITY DASHBOARD ============ -->
+    <section class="section section--tight-top" id="dashboard" aria-labelledby="dashboard-title">
+      <div class="container">
+        <header class="section-head reveal">
+          <p class="eyebrow">Dashboard</p>
+          <h2 class="section-title" id="dashboard-title">Your Productivity at a Glance</h2>
+          <p class="section-lead">A preview of the dashboard: progress, tasks, study hours and your streak in one place.</p>
+        </header>
+
+        <div class="dashboard reveal">
+          <div class="dashboard__bar">
+            <div>
+              <p class="dashboard__greeting" id="dash-greeting">Welcome back</p>
+              <p class="dashboard__date" id="dash-date">Today</p>
+            </div>
+            <span class="live-pill"><span class="live-pill__dot" aria-hidden="true"></span> Sample data</span>
+          </div>
+
+          <div class="stats__grid">
+            <article class="stat-card">
+              <div class="stat-card__top">
+                <span class="stat-card__icon"><svg class="icon" aria-hidden="true"><use href="#i-target"/></svg></span>
+                <h3 class="stat-card__label">Today's Progress</h3>
+              </div>
+              <p class="stat-card__value">75<span class="stat-card__unit">%</span></p>
+              <div class="progress" role="progressbar" aria-label="Today's progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="75">
+                <div class="progress__bar" data-meter="75"></div>
+              </div>
+              <p class="stat-card__hint">Of today's plan is done</p>
+            </article>
+
+            <article class="stat-card">
+              <div class="stat-card__top">
+                <span class="stat-card__icon stat-card__icon--success"><svg class="icon" aria-hidden="true"><use href="#i-check-square"/></svg></span>
+                <h3 class="stat-card__label">Tasks Completed</h3>
+              </div>
+              <p class="stat-card__value">6 / 8</p>
+              <div class="progress progress--success" role="progressbar" aria-label="Tasks completed" aria-valuemin="0" aria-valuemax="100" aria-valuenow="75">
+                <div class="progress__bar" data-meter="75"></div>
+              </div>
+              <p class="stat-card__hint">2 tasks left</p>
+            </article>
+
+            <article class="stat-card">
+              <div class="stat-card__top">
+                <span class="stat-card__icon"><svg class="icon" aria-hidden="true"><use href="#i-book"/></svg></span>
+                <h3 class="stat-card__label">Study Hours</h3>
+              </div>
+              <p class="stat-card__value">4.5<span class="stat-card__unit"> hrs</span></p>
+              <div class="progress" role="progressbar" aria-label="Study hours toward a 6 hour daily goal" aria-valuemin="0" aria-valuemax="100" aria-valuenow="75">
+                <div class="progress__bar" data-meter="75"></div>
+              </div>
+              <p class="stat-card__hint">Goal: 6 hours a day</p>
+            </article>
+
+            <article class="stat-card">
+              <div class="stat-card__top">
+                <span class="stat-card__icon stat-card__icon--warm"><svg class="icon" aria-hidden="true"><use href="#i-flame"/></svg></span>
+                <h3 class="stat-card__label">Current Streak</h3>
+              </div>
+              <p class="stat-card__value">7<span class="stat-card__unit"> days</span></p>
+              <div class="progress progress--success" role="progressbar" aria-label="Streak toward a 10 day goal" aria-valuemin="0" aria-valuemax="100" aria-valuenow="70">
+                <div class="progress__bar" data-meter="70"></div>
+              </div>
+              <p class="stat-card__hint">Goal: 10 days in a row</p>
+            </article>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ 5. TASK MANAGER ============ -->
+    <section class="section section--tight-top" id="tasks" data-nav="dashboard" aria-labelledby="tasks-title">
+      <div class="container">
+        <header class="section-head reveal">
+          <p class="eyebrow">Task Manager</p>
+          <h2 class="section-title" id="tasks-title">Manage Your Tasks</h2>
+          <p class="section-lead">Add a task, tick it off when it's done, or delete it. The counters update instantly.</p>
+        </header>
+
+        <div class="task-card reveal">
+          <form class="task-form" id="task-form" novalidate>
+            <label class="sr-only" for="task-input">New task</label>
+            <input class="task-form__input" id="task-input" type="text" maxlength="100" autocomplete="off" placeholder="Enter a new task..." required>
+            <button class="btn btn--primary" type="submit"><svg class="icon" aria-hidden="true"><use href="#i-plus"/></svg> Add Task</button>
+          </form>
+
+          <dl class="task-stats" aria-label="Task summary">
+            <div class="task-stats__item"><dt>Total</dt><dd id="count-total">0</dd></div>
+            <div class="task-stats__item task-stats__item--done"><dt>Completed</dt><dd id="count-done">0</dd></div>
+            <div class="task-stats__item task-stats__item--pending"><dt>Pending</dt><dd id="count-pending">0</dd></div>
+          </dl>
+
+          <ul class="task-list" id="task-list" aria-label="Your tasks"></ul>
+          <div class="task-empty" id="task-empty" hidden>
+            <span class="task-empty__icon"><svg class="icon" aria-hidden="true"><use href="#i-check-square"/></svg></span>
+            <p>No tasks yet. Add one to get started!</p>
+          </div>
+
+          <div class="task-card__footer">
+            <p class="task-card__tip">Tick the box to mark a task as done. Tasks reset when you reload the page.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ 6. FOCUS TIMER ============ -->
+    <section class="section section--tint" id="timer" data-nav="dashboard" aria-labelledby="timer-title">
+      <div class="container timer-layout">
+        <div class="timer-intro reveal">
+          <p class="eyebrow">Focus Timer</p>
+          <h2 class="section-title" id="timer-title">Deep Work, One Session at a Time</h2>
+          <p class="section-lead">The Pomodoro technique splits study time into short, focused sprints. It's simple, and it works.</p>
+          <ol class="timer-steps">
+            <li><span class="timer-steps__num">1</span><div><strong>Focus for 25 minutes</strong><span>Pick one task and give it your full attention.</span></div></li>
+            <li><span class="timer-steps__num">2</span><div><strong>Take a 5 minute break</strong><span>Stand up, stretch, drink some water.</span></div></li>
+            <li><span class="timer-steps__num">3</span><div><strong>Repeat, then rest longer</strong><span>After four sessions, enjoy a 15 minute break.</span></div></li>
+          </ol>
+        </div>
+
+        <article class="timer-card reveal" aria-label="Pomodoro focus timer">
+          <div class="timer">
+            <svg class="timer__ring" viewBox="0 0 120 120" aria-hidden="true" focusable="false">
+              <defs>
+                <linearGradient id="timer-gradient" x1="0" y1="0" x2="1" y2="1">
+                  <stop offset="0" stop-color="#8B7CFF"/>
+                  <stop offset="1" stop-color="#6C63FF"/>
+                </linearGradient>
+              </defs>
+              <circle class="timer__track" cx="60" cy="60" r="52" pathLength="100"/>
+              <circle class="timer__progress" id="timer-progress" cx="60" cy="60" r="52" pathLength="100"/>
+            </svg>
+            <div class="timer__center">
+              <div class="timer__display" id="timer-display" role="timer">25:00</div>
+              <p class="timer__mode">Focus</p>
+            </div>
+          </div>
+
+          <p class="timer-status" id="timer-status" aria-live="polite">Ready when you are.</p>
+
+          <div class="timer-controls">
+            <button class="btn btn--primary" type="button" id="timer-start"><svg class="icon" aria-hidden="true"><use href="#i-play"/></svg> Start</button>
+            <button class="btn btn--ghost" type="button" id="timer-pause" aria-disabled="true"><svg class="icon" aria-hidden="true"><use href="#i-pause"/></svg> Pause</button>
+            <button class="btn btn--ghost" type="button" id="timer-reset"><svg class="icon" aria-hidden="true"><use href="#i-reset"/></svg> Reset</button>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <!-- ============ 7. STUDY PLANNER ============ -->
+    <section class="section" id="planner" aria-labelledby="planner-title">
+      <div class="container">
+        <header class="section-head reveal">
+          <p class="eyebrow">Study Planner</p>
+          <h2 class="section-title" id="planner-title">Your Weekly Study Plan</h2>
+          <p class="section-lead">A structured routine for the week. Today is highlighted so you always know what comes next.</p>
+        </header>
+
+        <div class="planner__grid">
+          <article class="study-card reveal" data-day="1">
+            <div class="study-card__day"><h3>Monday</h3></div>
+            <div class="study-card__body">
+              <span class="study-card__tag">Coding</span>
+              <p class="study-card__subject">DSA — Arrays</p>
+              <p class="study-card__time"><svg class="icon icon--sm" aria-hidden="true"><use href="#i-clock"/></svg> 2 hrs</p>
+            </div>
+          </article>
+          <article class="study-card reveal" data-day="2">
+            <div class="study-card__day"><h3>Tuesday</h3></div>
+            <div class="study-card__body">
+              <span class="study-card__tag">Theory</span>
+              <p class="study-card__subject">DBMS — SQL</p>
+              <p class="study-card__time"><svg class="icon icon--sm" aria-hidden="true"><use href="#i-clock"/></svg> 1.5 hrs</p>
+            </div>
+          </article>
+          <article class="study-card reveal" data-day="3">
+            <div class="study-card__day"><h3>Wednesday</h3></div>
+            <div class="study-card__body">
+              <span class="study-card__tag">Aptitude</span>
+              <p class="study-card__subject">Quantitative Aptitude</p>
+              <p class="study-card__time"><svg class="icon icon--sm" aria-hidden="true"><use href="#i-clock"/></svg> 1 hr</p>
+            </div>
+          </article>
+          <article class="study-card reveal" data-day="4">
+            <div class="study-card__day"><h3>Thursday</h3></div>
+            <div class="study-card__body">
+              <span class="study-card__tag">Theory</span>
+              <p class="study-card__subject">Operating Systems</p>
+              <p class="study-card__time"><svg class="icon icon--sm" aria-hidden="true"><use href="#i-clock"/></svg> 1.5 hrs</p>
+            </div>
+          </article>
+          <article class="study-card reveal" data-day="5">
+            <div class="study-card__day"><h3>Friday</h3></div>
+            <div class="study-card__body">
+              <span class="study-card__tag">Coding</span>
+              <p class="study-card__subject">Python Practice</p>
+              <p class="study-card__time"><svg class="icon icon--sm" aria-hidden="true"><use href="#i-clock"/></svg> 2 hrs</p>
+            </div>
+          </article>
+          <article class="study-card reveal" data-day="6">
+            <div class="study-card__day"><h3>Saturday</h3></div>
+            <div class="study-card__body">
+              <span class="study-card__tag">Test</span>
+              <p class="study-card__subject">Mock Test</p>
+              <p class="study-card__time"><svg class="icon icon--sm" aria-hidden="true"><use href="#i-clock"/></svg> 3 hrs</p>
+            </div>
+          </article>
+          <article class="study-card reveal" data-day="0">
+            <div class="study-card__day"><h3>Sunday</h3></div>
+            <div class="study-card__body">
+              <span class="study-card__tag">Review</span>
+              <p class="study-card__subject">Revision</p>
+              <p class="study-card__time"><svg class="icon icon--sm" aria-hidden="true"><use href="#i-clock"/></svg> 1 hr</p>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ 8. PROGRESS ============ -->
+    <section class="section section--primary" id="progress" data-nav="planner" aria-labelledby="progress-title">
+      <div class="container">
+        <header class="section-head reveal">
+          <p class="eyebrow eyebrow--light">Progress</p>
+          <h2 class="section-title" id="progress-title">Keep Growing Every Day</h2>
+          <p class="section-lead">Small, steady progress adds up. Here is how a good week can look.</p>
+        </header>
+
+        <div class="progress-grid">
+          <article class="progress-card reveal">
+            <div class="ring" aria-hidden="true">
+              <svg viewBox="0 0 120 120" focusable="false">
+                <circle class="ring__track" cx="60" cy="60" r="52" pathLength="100"/>
+                <circle class="ring__bar" cx="60" cy="60" r="52" pathLength="100" data-meter="80"/>
+              </svg>
+              <span class="ring__label">80%</span>
+            </div>
+            <h3 class="progress-card__title">Weekly Study Goal</h3>
+            <p class="progress-card__value">32 / 40 hours</p>
+            <p class="progress-card__hint">8 hours to go this week.</p>
+          </article>
+
+          <article class="progress-card reveal">
+            <div class="ring ring--success" aria-hidden="true">
+              <svg viewBox="0 0 120 120" focusable="false">
+                <circle class="ring__track" cx="60" cy="60" r="52" pathLength="100"/>
+                <circle class="ring__bar" cx="60" cy="60" r="52" pathLength="100" data-meter="75"/>
+              </svg>
+              <span class="ring__label">75%</span>
+            </div>
+            <h3 class="progress-card__title">Tasks Completed</h3>
+            <p class="progress-card__value">75% done</p>
+            <p class="progress-card__hint">6 of 8 tasks finished.</p>
+          </article>
+
+          <article class="progress-card reveal">
+            <div class="streak" aria-hidden="true">
+              <svg class="icon streak__flame" aria-hidden="true"><use href="#i-flame"/></svg>
+              <span class="streak__number">7</span>
+            </div>
+            <h3 class="progress-card__title">Study Streak</h3>
+            <p class="progress-card__value">7 days</p>
+            <ul class="streak__days" aria-label="Studied on each of the last 7 days">
+              <li class="is-done"><span>M</span></li>
+              <li class="is-done"><span>T</span></li>
+              <li class="is-done"><span>W</span></li>
+              <li class="is-done"><span>T</span></li>
+              <li class="is-done"><span>F</span></li>
+              <li class="is-done"><span>S</span></li>
+              <li class="is-done"><span>S</span></li>
+            </ul>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ 9. MOTIVATION / TESTIMONIALS ============ -->
+    <section class="section" id="testimonials" aria-labelledby="testimonials-title">
+      <div class="container">
+        <header class="section-head reveal">
+          <p class="eyebrow">Student Stories</p>
+          <h2 class="section-title" id="testimonials-title">Students Who Found Their Flow</h2>
+          <p class="section-lead">Sample testimonials from fictional students, written to show how FocusFlow could fit into a study routine.</p>
+        </header>
+
+        <div class="testimonials__grid">
+          <article class="testimonial-card reveal">
+            <svg class="icon testimonial-card__quote" aria-hidden="true"><use href="#i-quote"/></svg>
+            <blockquote class="testimonial-card__text">
+              <p>FocusFlow helped me organize my study routine and stop procrastinating.</p>
+            </blockquote>
+            <footer class="testimonial-card__author">
+              <span class="avatar" aria-hidden="true">A</span>
+              <p><strong>Ananya</strong><span>Computer Science Student</span></p>
+            </footer>
+          </article>
+
+          <article class="testimonial-card reveal">
+            <svg class="icon testimonial-card__quote" aria-hidden="true"><use href="#i-quote"/></svg>
+            <blockquote class="testimonial-card__text">
+              <p>The 25-minute timer turned my messy evenings into focused sprints. I finish my revision earlier now.</p>
+            </blockquote>
+            <footer class="testimonial-card__author">
+              <span class="avatar" aria-hidden="true">R</span>
+              <p><strong>Rohan</strong><span>Final-Year Engineering Student</span></p>
+            </footer>
+          </article>
+
+          <article class="testimonial-card reveal">
+            <svg class="icon testimonial-card__quote" aria-hidden="true"><use href="#i-quote"/></svg>
+            <blockquote class="testimonial-card__text">
+              <p>Seeing my streak and weekly hours grow every day keeps me motivated, even during exam season.</p>
+            </blockquote>
+            <footer class="testimonial-card__author">
+              <span class="avatar" aria-hidden="true">M</span>
+              <p><strong>Meera</strong><span>Placement Preparation Student</span></p>
+            </footer>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ 10. FAQ ============ -->
+    <section class="section section--tight-top" id="faq" aria-labelledby="faq-title">
+      <div class="container container--narrow">
+        <header class="section-head reveal">
+          <p class="eyebrow">FAQ</p>
+          <h2 class="section-title" id="faq-title">Frequently Asked Questions</h2>
+        </header>
+
+        <div class="faq reveal" id="faq-list">
+          <div class="faq__item">
+            <h3 class="faq__heading"><button class="faq__question" type="button" id="faq-q1" aria-expanded="false" aria-controls="faq-a1"><span>What is FocusFlow?</span><svg class="icon faq__chevron" aria-hidden="true"><use href="#i-chevron"/></svg></button></h3>
+            <div class="faq__answer" id="faq-a1" role="region" aria-labelledby="faq-q1"><div class="faq__answer-inner"><p>FocusFlow is a student productivity dashboard that brings a task manager, a Pomodoro focus timer, a weekly study planner and progress tracking together in one clean page.</p></div></div>
+          </div>
+          <div class="faq__item">
+            <h3 class="faq__heading"><button class="faq__question" type="button" id="faq-q2" aria-expanded="false" aria-controls="faq-a2"><span>Can I use FocusFlow on my phone?</span><svg class="icon faq__chevron" aria-hidden="true"><use href="#i-chevron"/></svg></button></h3>
+            <div class="faq__answer" id="faq-a2" role="region" aria-labelledby="faq-q2"><div class="faq__answer-inner"><p>Yes. FocusFlow is designed mobile-first, so every section adapts to phones, tablets and desktops, and the navigation collapses into a menu on small screens.</p></div></div>
+          </div>
+          <div class="faq__item">
+            <h3 class="faq__heading"><button class="faq__question" type="button" id="faq-q3" aria-expanded="false" aria-controls="faq-a3"><span>Does the focus timer work without a backend?</span><svg class="icon faq__chevron" aria-hidden="true"><use href="#i-chevron"/></svg></button></h3>
+            <div class="faq__answer" id="faq-a3" role="region" aria-labelledby="faq-q3"><div class="faq__answer-inner"><p>It does. The timer runs entirely in your browser with JavaScript and uses your device clock, so it stays accurate even if the tab is in the background. No server is needed.</p></div></div>
+          </div>
+          <div class="faq__item">
+            <h3 class="faq__heading"><button class="faq__question" type="button" id="faq-q4" aria-expanded="false" aria-controls="faq-a4"><span>Can I add and delete tasks?</span><svg class="icon faq__chevron" aria-hidden="true"><use href="#i-chevron"/></svg></button></h3>
+            <div class="faq__answer" id="faq-a4" role="region" aria-labelledby="faq-q4"><div class="faq__answer-inner"><p>Absolutely. Add tasks, tick them off, untick them or delete them at any time, and the counters update instantly without reloading the page.</p></div></div>
+          </div>
+          <div class="faq__item">
+            <h3 class="faq__heading"><button class="faq__question" type="button" id="faq-q5" aria-expanded="false" aria-controls="faq-a5"><span>Is FocusFlow free?</span><svg class="icon faq__chevron" aria-hidden="true"><use href="#i-chevron"/></svg></button></h3>
+            <div class="faq__answer" id="faq-a5" role="region" aria-labelledby="faq-q5"><div class="faq__answer-inner"><p>Yes. FocusFlow is a free student project with no sign-up, no ads and no payment required.</p></div></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ============ 11. FOOTER ============ -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer__grid">
+        <div class="footer__brand">
+          <a class="logo logo--footer" href="#home" aria-label="FocusFlow — back to top">
+            <img class="logo__mark" src="assets/images/favicon.svg" alt="" width="34" height="34">
+            <span class="logo__text">FocusFlow</span>
+          </a>
+          <p>Helping students build better study habits, one focused session at a time.</p>
+        </div>
+
+        <nav class="footer__col" aria-label="Quick links">
+          <h2 class="footer__title">Quick Links</h2>
+          <ul>
+            <li><a href="#home">Home</a></li>
+            <li><a href="#features">Features</a></li>
+            <li><a href="#dashboard">Dashboard</a></li>
+            <li><a href="#planner">Planner</a></li>
+            <li><a href="#faq">FAQ</a></li>
+          </ul>
+        </nav>
+
+        <div class="footer__col">
+          <h2 class="footer__title">Contact</h2>
+          <ul>
+            <li><a href="mailto:hello@focusflow.example"><svg class="icon icon--sm" aria-hidden="true"><use href="#i-mail"/></svg> hello@focusflow.example</a></li>
+          </ul>
+        </div>
+
+        <div class="footer__col">
+          <h2 class="footer__title">Follow</h2>
+          <ul class="social">
+            <li><a class="social__link" href="https://x.com" target="_blank" rel="noopener noreferrer" aria-label="FocusFlow on X (opens in a new tab)">X</a></li>
+            <li><a class="social__link" href="https://www.linkedin.com" target="_blank" rel="noopener noreferrer" aria-label="FocusFlow on LinkedIn (opens in a new tab)">in</a></li>
+            <li><a class="social__link" href="https://github.com" target="_blank" rel="noopener noreferrer" aria-label="FocusFlow on GitHub (opens in a new tab)">Gh</a></li>
+            <li><a class="social__link" href="https://www.instagram.com" target="_blank" rel="noopener noreferrer" aria-label="FocusFlow on Instagram (opens in a new tab)">Ig</a></li>
+          </ul>
+        </div>
+      </div>
+
+      <p class="footer__copy">© 2026 FocusFlow. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <!-- Toast notifications appear here -->
+  <div class="toast-region" id="toast-region" aria-live="polite" aria-atomic="false"></div>
+
+</body>
+</html>
